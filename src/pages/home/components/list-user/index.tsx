@@ -123,7 +123,7 @@ function ListUser() {
     const [openAdd, setOpenAdd] = useState(false)
 
     return (
-        <div className="flex h-screen w-full flex-col bg-background border-r pt-10">
+        <div className="flex h-screen w-full flex-col bg-background border-r pt-4">
             <div className="flex justify-end">
                 <Button
                     size="sm"

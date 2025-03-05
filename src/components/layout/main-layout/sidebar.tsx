@@ -1,5 +1,6 @@
 import type React from "react"
 import { Briefcase, Calendar, Cog, FileText, FolderClosed, MessageSquare, MessageSquareMore } from "lucide-react"
+import { useLogoutUser } from "@/redux/hooks/user"
 
 interface NavItemProps {
     href: string
@@ -21,6 +22,14 @@ function NavItem({ icon, label, isActive }: NavItemProps) {
 }
 
 export default function SidebarNavigation() {
+
+    const logout = useLogoutUser()
+
+    const onLogout = () => {
+        window.location.href = "/"
+        logout()
+    }
+
     return (
         <div className="flex h-screen w-24 flex-col items-center border-r bg-white py-4">
             <div className="mb-8">
@@ -53,7 +62,9 @@ export default function SidebarNavigation() {
             </div>
 
             <div className="mt-auto">
-                <NavItem href="/settings" icon={<Cog size={20} />} label="Settings" />
+                <button onClick={onLogout}>
+                    <NavItem href="/settings" icon={<Cog size={20} />} label="Settings" />
+                </button>
             </div>
         </div>
     )

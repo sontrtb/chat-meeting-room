@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useSetUser } from '@/redux/hooks/user';
 
 const WelcomeScreen = () => {
+  const navigation = useNavigate()
+  const setUser = useSetUser()
+
   const [isHovered, setIsHovered] = useState(false);
 
   // Hiệu ứng nền động
@@ -37,8 +41,11 @@ const WelcomeScreen = () => {
     }
   };
 
-  const navigation = useNavigate()
+
   const handleLogin = () => {
+    setUser({
+      token: "abc",
+    })
     navigation("/")
   }
 
