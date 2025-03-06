@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useSetUser } from '@/redux/hooks/user';
+import { useMutation } from '@tanstack/react-query';
+import { login } from '@/api/auth';
 
 const WelcomeScreen = () => {
   const navigation = useNavigate()
@@ -41,12 +43,18 @@ const WelcomeScreen = () => {
     }
   };
 
-
+  const loginMuatation = useMutation({
+    mutationFn: login,
+    onSuccess: (res) => {
+      setUser({
+        token: res.token,
+      })
+      navigation("/")
+    }
+  })
   const handleLogin = () => {
-    setUser({
-      token: "abc",
-    })
-    navigation("/")
+    loginMuatation.mutate()
+
   }
 
   return (

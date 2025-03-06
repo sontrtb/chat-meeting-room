@@ -1,3 +1,4 @@
+import { addMember } from "@/api/member";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -9,27 +10,42 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Mic, MicOff } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IModalAddVoice {
     open: boolean;
-    onOpenChange: (value: boolean) => void
+    onOpenChange: (value: boolean) => void;
+    refetch: () => void
+}
+
+function blobToFile(blob: Blob, fileName: string) {
+    return new File([blob], fileName, { type: blob.type });
 }
 
 function ModalAddVoice(props: IModalAddVoice) {
-    const { open, onOpenChange } = props
+    const { open, onOpenChange, refetch } = props
 
     const [step, setStep] = useState(1)
 
     const [isRecording, setIsRecording] = useState(false);
 
-    const [name, setName] = useState("")
-    const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+    const [name, setName] = useState<string | null>(null)
+    const [audioFile, setAudioFile] = useState<File | null>(null);
 
     const mediaRecorderRef = useRef<MediaRecorder>(null);
     const audioChunksRef = useRef<Blob[]>([]);
+
+    useEffect(() => {
+        if(!open) {
+            setIsRecording(false);
+            setAudioFile(null);
+            setName(null);
+            setStep(1)
+        }
+    }, [open])
 
     const handleRecordToggle = () => {
         setIsRecording(!isRecording);
@@ -51,10 +67,9 @@ function ModalAddVoice(props: IModalAddVoice) {
 
             mediaRecorderRef.current.onstop = () => {
                 const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
-                setAudioBlob(audioBlob);
-                const url = URL.createObjectURL(audioBlob);
-                console.log("url", url)
-
+                
+                setAudioFile(blobToFile(audioBlob, "voice.wav"));
+    
                 audioChunksRef.current = [];
             };
 
@@ -94,13 +109,24 @@ function ModalAddVoice(props: IModalAddVoice) {
         }
     };
 
+    const addMemberMutation = useMutation({
+        mutationFn: addMember,
+        onSuccess: () => {
+            onOpenChange(false);
+            refetch();
+        }
+
+    })
     const onSubmit = () => {
         if (step === 1) {
             setStep(2)
         } else {
-            stopRecording();
-            // Todo gửi
-            console.log(name, audioBlob)
+            if(name && audioFile) {
+                addMemberMutation.mutate({
+                    name,
+                    file: audioFile
+                })
+            }
         }
     }
 
@@ -175,7 +201,7 @@ function ModalAddVoice(props: IModalAddVoice) {
                 </Tabs>
 
                 <DialogFooter>
-                    <Button variant="outline" onClick={onSubmit}>{step === 1 ? "Tiếp theo" : "Xác nhận"}</Button>
+                    <Button isLoading={addMemberMutation.isPending} variant="outline" onClick={onSubmit}>{step === 1 ? "Tiếp theo" : "Xác nhận"}</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
