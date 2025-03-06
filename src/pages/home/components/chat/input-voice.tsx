@@ -1,7 +1,10 @@
 import { Mic, MicOff } from "lucide-react"
 import { useMicVAD } from "@ricky0123/vad-react"
-import { float32ArrayToWav } from "@/lib/utils"
+import { blobToFile, float32ArrayToWav } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { useMutation } from "@tanstack/react-query";
+import sendMessage from "@/api/message";
+import { useGetMessage, useSetMessage } from "@/redux/hooks/message";
 
 const pulseVariants = {
     initial: {
@@ -27,14 +30,25 @@ const pulseVariants = {
 
 function InputVoice() {
 
+    const setMessage = useSetMessage()
+    const messageCurrent = useGetMessage()
+
+    const sendMessageMutation = useMutation({
+        mutationFn: sendMessage,
+        onSuccess: (res) => {
+            setMessage(res)
+        }
+    })
+
     const vad = useMicVAD({
         startOnLoad: false,
         onSpeechEnd: (audio) => {
             const wavBuffer = float32ArrayToWav(audio)
             const blob = new Blob([wavBuffer], { type: 'audio/wav' });
-            const url = URL.createObjectURL(blob);
-
-            console.log(url)
+            sendMessageMutation.mutate({
+                seg: messageCurrent?.seg ?? "",
+                file: blobToFile(blob, "voice.wav")
+            })
         },
     })
 

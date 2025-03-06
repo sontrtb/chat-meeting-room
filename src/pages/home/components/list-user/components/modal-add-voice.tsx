@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { blobToFile, convertTo16kHz } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Mic, MicOff } from "lucide-react";
@@ -19,10 +20,6 @@ interface IModalAddVoice {
     open: boolean;
     onOpenChange: (value: boolean) => void;
     refetch: () => void
-}
-
-function blobToFile(blob: Blob, fileName: string) {
-    return new File([blob], fileName, { type: blob.type });
 }
 
 function ModalAddVoice(props: IModalAddVoice) {
@@ -65,10 +62,12 @@ function ModalAddVoice(props: IModalAddVoice) {
                 audioChunksRef.current.push(event.data);
             };
 
-            mediaRecorderRef.current.onstop = () => {
+            mediaRecorderRef.current.onstop = async () => {
                 const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+
+                const audioBlob16kHz = await convertTo16kHz(audioBlob);
                 
-                setAudioFile(blobToFile(audioBlob, "voice.wav"));
+                setAudioFile(blobToFile(audioBlob16kHz, "voice.wav"));
     
                 audioChunksRef.current = [];
             };
@@ -123,7 +122,7 @@ function ModalAddVoice(props: IModalAddVoice) {
         } else {
             if(name && audioFile) {
                 addMemberMutation.mutate({
-                    name,
+                    name: name,
                     file: audioFile
                 })
             }
@@ -201,7 +200,11 @@ function ModalAddVoice(props: IModalAddVoice) {
                 </Tabs>
 
                 <DialogFooter>
-                    <Button isLoading={addMemberMutation.isPending} variant="outline" onClick={onSubmit}>{step === 1 ? "Tiếp theo" : "Xác nhận"}</Button>
+                    <Button
+                        isLoading={addMemberMutation.isPending}
+                        variant="outline"
+                        onClick={onSubmit}>{step === 1 ? "Tiếp theo" : "Xác nhận"}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

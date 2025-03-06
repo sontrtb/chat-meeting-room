@@ -1,35 +1,38 @@
-import { Message } from "./list-message"
 import { Check } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { IMessage } from "@/api/message"
+import { useGetListUser } from "@/redux/hooks/list-user"
+import { useMemo } from "react"
 
-function MessageItem({ message }: { message: Message }) {
+function MessageItem({ message }: { message: IMessage }) {
+    const listUser = useGetListUser()
+
+    const user = useMemo(() => {
+        return listUser.find(u => u.id === message.speaker)
+    }, [listUser, message.speaker])
+
     return (
-        <div className={`flex ${message.sender === "You" ? "justify-end" : "justify-start"}`}>
-            {message.sender !== "You" && (
-                <Avatar className="h-10 w-10 mr-2">
-                    <AvatarFallback>
-                        {"Name"
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                    </AvatarFallback>
-                </Avatar>
-            )}
-            <div className={`max-w-[75%] ${message.sender === "You" ? "order-1" : "order-2"}`}>
-                {message.sender !== "You" && <div className="font-medium text-sm mb-1 ml-1">{message.sender}</div>}
+        <div className="flex justify-start">
+            <Avatar className="h-12 w-12 mr-2">
+                <AvatarFallback>
+                    {user?.name
+                        ?.split(" ")
+                        .map((n) => n[0] || n[1])
+                        .join("")
+                        ?? "AN"
+                    }
+                </AvatarFallback>
+            </Avatar>
+            <div className="max-w-[75%] order-2">
                 <div
-                    className={`rounded-2xl p-3 ${message.sender === "You"
-                        ? "bg-blue-500 text-white rounded-tr-none"
-                        : "bg-slate-50 text-gray-800 rounded-tl-none shadow-xl border"
-                        }`}
+                    className="rounded-2xl p-3 bg-slate-50 text-gray-800 rounded-tl-none shadow-xl border"
                 >
                     <div>{message.content}</div>
                     <div
-                        className={`text-xs mt-1 flex justify-end items-center ${message.sender === "You" ? "text-blue-100" : "text-gray-500"
-                            }`}
+                        className="text-xs mt-1 flex justify-end items-center text-gray-500"
                     >
-                        {message.timestamp}
-                        {message.sender === "You" && message.isRead && <Check className="w-3 h-3 ml-1" />}
+                        {"10:12"}
+                        <Check className="w-3 h-3 ml-1" />
                     </div>
                 </div>
             </div>

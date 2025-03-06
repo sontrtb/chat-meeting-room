@@ -2,17 +2,23 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
 import UserItem from "./components/user-item"
 import ModalAddVoice from "./components/modal-add-voice"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getListMember } from "@/api/member"
+import { useSetListUser } from "@/redux/hooks/list-user"
 
 function ListUser() {
+    const setListUser = useSetListUser()
     const [openAdd, setOpenAdd] = useState(false)
 
     const getListMemberQuery = useQuery({
         queryKey: ["getListMember"],
         queryFn: getListMember
     })
+
+    useEffect(() => {
+        setListUser(getListMemberQuery.data ?? [])
+    }, [getListMemberQuery.data, setListUser])
 
     return (
         <div className="flex h-screen w-full flex-col bg-background border-r pt-4">

@@ -1,7 +1,8 @@
+import { IMember } from "@/api/member";
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface IListUserState {
-  listUser: {id: 1; name: string}[]
+  listUser: IMember[]
 }
 
 const initState: IListUserState = {
@@ -12,7 +13,7 @@ const listUserSlice = createSlice({
   name: "listUser",
   initialState: initState,
   reducers: {
-    setListUser: (state, action: PayloadAction<{id: 1; name: string}[]>) => {
+    setListUser: (state, action: PayloadAction<IMember[]>) => {
       return { ...state, listUser: action.payload };
     },
   },

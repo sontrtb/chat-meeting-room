@@ -23,7 +23,7 @@ const getListMember = async (): Promise<IMember[]> => {
 
 const addMember = async (data: {name: string, file: File}): Promise<IMember> => {
     const formData = new FormData()
-    formData.append("addMember", data.name)
+    formData.append("name", data.name)
     formData.append("file", data.file)
     return await rootApi(
       {

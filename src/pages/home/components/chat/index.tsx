@@ -1,4 +1,4 @@
-import InputVoice from "./InputVoice"
+import InputVoice from "./input-voice"
 import ListMessage from "./list-message"
 
 function Chat() {

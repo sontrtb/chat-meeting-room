@@ -1,5 +1,5 @@
 import type React from "react"
-import { Briefcase, Calendar, Cog, FileText, FolderClosed, MessageSquare, MessageSquareMore } from "lucide-react"
+import { Briefcase, Calendar, FileText, FolderClosed, LogOut, MessageSquare, MessageSquareMore } from "lucide-react"
 import { useLogoutUser } from "@/redux/hooks/user"
 
 interface NavItemProps {
@@ -63,7 +63,7 @@ export default function SidebarNavigation() {
 
             <div className="mt-auto">
                 <button onClick={onLogout}>
-                    <NavItem href="/settings" icon={<Cog size={20} />} label="Settings" />
+                    <NavItem href="/settings" icon={<LogOut size={20} />} label="Logout" />
                 </button>
             </div>
         </div>
