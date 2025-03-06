@@ -14,10 +14,10 @@ function MessageItem({ message }: { message: IMessage }) {
     return (
         <div className="flex justify-start">
             <Avatar className="h-12 w-12 mr-2">
-                <AvatarFallback>
+                <AvatarFallback style={{backgroundColor: user?.color}}>
                     {user?.name
                         ?.split(" ")
-                        .map((n) => n[0] || n[1])
+                        .map((n) => n[0])
                         .join("")
                         ?? "AN"
                     }

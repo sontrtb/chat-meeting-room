@@ -1,12 +1,12 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { IMember } from "@/api/member"
+import { IMemberStore } from "@/redux/slices/list-user-slice"
 
-function UserItem({ message }: { message: IMember }) {
+function UserItem({ message }: { message: IMemberStore }) {
     return (
         <div className="flex cursor-pointer items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors hover:bg-gray-50">
             <div className="relative">
                 <Avatar className="h-12 w-12">
-                    <AvatarFallback>
+                    <AvatarFallback style={{backgroundColor: message.color}}>
                         {message.name
                             ?.split(" ")
                             .map((n) => n[0])
@@ -18,7 +18,7 @@ function UserItem({ message }: { message: IMember }) {
             <div className="flex flex-1 flex-col">
                 <div className="flex items-center justify-between">
                     <h3 className="font-medium text-gray-900">{message.name ?? "Khách hàng"}</h3>
-                    <span className="text-xs text-gray-500">12:10</span>
+                    <span className="text-xs text-gray-500">{message.time}</span>
                 </div>
                 <div className="flex items-center justify-between">
                     <p className="line-clamp-1 text-sm text-gray-500">Đã vào phòng họp</p>

@@ -142,7 +142,7 @@ function ModalAddVoice(props: IModalAddVoice) {
                 <Tabs defaultValue="name" value={step === 1 ? "name" : "voice"}>
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="name">Tên</TabsTrigger>
-                        <TabsTrigger value="password">Giọng nói</TabsTrigger>
+                        <TabsTrigger value="voice">Giọng nói</TabsTrigger>
                     </TabsList>
                     <TabsContent value="name">
                         <div className="mt-10">

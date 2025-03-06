@@ -5,10 +5,14 @@ import ModalAddVoice from "./components/modal-add-voice"
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { getListMember } from "@/api/member"
-import { useSetListUser } from "@/redux/hooks/list-user"
+import { useGetListUser, useSetListUser } from "@/redux/hooks/list-user"
+import avatarColors from "@/config/avatar-colors"
+import moment from "moment"
 
 function ListUser() {
     const setListUser = useSetListUser()
+    const listUser = useGetListUser()
+
     const [openAdd, setOpenAdd] = useState(false)
 
     const getListMemberQuery = useQuery({
@@ -17,8 +21,9 @@ function ListUser() {
     })
 
     useEffect(() => {
-        setListUser(getListMemberQuery.data ?? [])
-    }, [getListMemberQuery.data, setListUser])
+        const listUser = getListMemberQuery.data?.map((u, index) => ({...u, color: avatarColors[index], time: moment().format("HH:mm")}))
+        setListUser(listUser ?? [])
+    }, [getListMemberQuery.data])
 
     return (
         <div className="flex h-screen w-full flex-col bg-background border-r pt-4">
@@ -34,7 +39,7 @@ function ListUser() {
             </div>
             <ScrollArea className="h-[calc(100vh-4rem)]">
                 <div className="flex flex-col">
-                    {getListMemberQuery.data?.map((member) => (
+                    {listUser.map((member) => (
                         <UserItem key={member.id} message={member} />
                     ))}
                 </div>
